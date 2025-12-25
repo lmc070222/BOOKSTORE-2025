@@ -1,0 +1,1 @@
+/usr/bin/c++  -g CMakeFiles/code.dir/src/main.cpp.o CMakeFiles/code.dir/src/account_manager.cpp.o CMakeFiles/code.dir/src/book_manager.cpp.o CMakeFiles/code.dir/src/log_manager.cpp.o CMakeFiles/code.dir/src/Paser.cpp.o CMakeFiles/code.dir/src/utils.cpp.o -o code 
