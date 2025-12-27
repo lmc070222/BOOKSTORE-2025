@@ -18,6 +18,20 @@ public:
   std::fstream f;
   memoryriver(){};
   memoryriver(std::string s) { filename = s; };
+  void initialise(std::string s) {
+    filename = s;
+    f.open(filename, std::ios::in | std::ios::out | std::ios::binary);
+    if (!f) {
+      f.clear();
+      std::ofstream o(filename, std::ios::binary);
+      Block b;
+      b.cnt = 0;
+      b.nxt = -1;
+      o.write((char *)&b, sizeof(Block));
+      o.close();
+      f.open(filename, std::ios::in | std::ios::out | std::ios::binary);
+    }
+  }
   void init() {
     f.open(filename, std::ios::in | std::ios::out | std::ios::binary);
     if (!f) {

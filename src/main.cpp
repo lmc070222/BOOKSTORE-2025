@@ -9,12 +9,15 @@
 CommandParser commandpaser;
 std::string command="";
 int main() {
-  std::cout << 1 << std::endl;
-  getline(std::cin,command);
-  while (command != "quit" and command != "exit") {
+  while (getline(std::cin, command)) {
+    // 去除前后空格
+    std::string cmd = command;
+    while (!cmd.empty() && cmd[0]==' ') cmd.erase(0,1);
+    while (!cmd.empty() && cmd[cmd.size()-1]==' ') cmd.erase(cmd.size()-1,1);
+    if (cmd == "quit" || cmd == "exit") {
+      break;
+    }
     commandpaser.parseCommand(command);
-    getline(std::cin,command);
-    std::cout << "sss" << std::endl;
   }
   return 0;
 }

@@ -1,21 +1,21 @@
 #pragma once
-#include "/home/lmc123456/Bookstore-2025/include/book.h"
+#include "book.h"
 #include "utils.h"
 #include <cstring>
 #include <fstream>
 #include <vector>
-const int maxsize = 30;
+const int maxsize = 31;
 class User {
 public:
-  char username[30];
-  char id[30];
-  char password[30];
+  char username[31];
+  char id[31];
+  char password[31];
   int privilege = 0;
 
   User() {
-    memset(username, 0, 30);
-    memset(id, 0, 30);
-    memset(password, 0, 30);
+    memset(username, 0, 31);
+    memset(id, 0, 31);
+    memset(password, 0, 31);
     privilege = 0;
   }
   User(char *name, char *ID, char *pas, int pri) {
@@ -41,15 +41,16 @@ private:
 public:
   std::vector<ubook> accounts;
   AccountManager() {
-    acc.f.open("accounts.dat", std::ios::in | std::ios::out | std::ios::binary);
+    acc.initialise("accounts.dat");
     User user0 ;
-    char root[30]="root";
-    char sjtu[30]="sjtu";
-    memcpy (user0.username,root,30);
-    memcpy (user0.id,root,30);
-    memcpy (user0.password,sjtu,30);
+    char root[31]="root";
+    char sjtu[31]="sjtu";
+    memcpy (user0.username,root,31);
+    memcpy (user0.id,root,31);
+    memcpy (user0.password,sjtu,31);
     user0.privilege=7;
-    acc.insert(user0);
+    std::vector<User> found=acc.find(user0);
+    if (found.empty()) acc.insert(user0);
   }
   ~AccountManager() { acc.f.close(); }
   void login(char *userid, char *pas);

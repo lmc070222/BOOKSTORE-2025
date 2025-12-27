@@ -3,26 +3,26 @@
 #include <vector>
 class Book {
 public:
-  char ISBN[20];
-  char bookname[60];
-  char bookauther[60];
-  char keyword[60];
+  char ISBN[21];
+  char bookname[61];
+  char bookauther[61];
+  char keyword[61];
   long long remain_num = 0;
   double price;
   Book &operator=(const Book &other) {
-    memcpy(ISBN, other.ISBN, 20);
-    memcpy(this->bookauther, other.bookauther, 60);
-    memcpy(bookname, other.bookname, 60);
-    memcpy(keyword, other.keyword, 60);
+    memcpy(ISBN, other.ISBN, 21);
+    memcpy(this->bookauther, other.bookauther, 61);
+    memcpy(bookname, other.bookname, 61);
+    memcpy(keyword, other.keyword, 61);
     remain_num = other.remain_num;
     price = other.price;
     return *this;
   }
   bool if_same(const Book &other) {
-    if (memcmp(ISBN, other.ISBN, 20) == 0 and
-        memcmp(this->bookauther, other.bookauther, 60) == 0 and
-        memcmp(bookname, other.bookname, 60) == 0 and
-        memcmp(keyword, other.keyword, 60) == 0 and
+    if (memcmp(ISBN, other.ISBN, 21) == 0 and
+        memcmp(this->bookauther, other.bookauther, 61) == 0 and
+        memcmp(bookname, other.bookname, 61) == 0 and
+        memcmp(keyword, other.keyword, 61) == 0 and
         remain_num == other.remain_num and price == other.price)
       return true;
     return false;
@@ -40,11 +40,11 @@ public:
 };
 class Bookbookname {
   public:
-  char ISBN[20];
-  char bookname[60];
+  char ISBN[21];
+  char bookname[61];
   Bookbookname &operator=(const Bookbookname &other) {
-    memcpy(ISBN, other.ISBN, 20);
-    memcpy(bookname, other.bookname, 60);
+    memcpy(ISBN, other.ISBN, 21);
+    memcpy(bookname, other.bookname, 61);
     return *this;
   }
   Bookbookname() {
@@ -62,18 +62,18 @@ class Bookbookname {
 };
 class Bookbookauther {
   public:
-  char ISBN[20];
-  char bookauther[60];
+  char ISBN[21];
+  char bookauther[61];
   Bookbookauther &operator=(const Bookbookauther &other) {
-    memcpy(ISBN, other.ISBN, 20);
-    memcpy(this->bookauther, other.bookauther, 60);
+    memcpy(ISBN, other.ISBN, 21);
+    memcpy(this->bookauther, other.bookauther, 61);
     return *this;
   }
   Bookbookauther() {
     memset(ISBN, 0, sizeof(ISBN));
     memset(bookauther, 0, sizeof(bookauther));
   }
-  bool operator<(const Bookbookauther &b) const { return (strcmp(bookauther, b.bookauther) < 0) or (strcmp(bookauther, b.bookauther) == 0 or strcmp(ISBN,b.ISBN) < 0); }
+  bool operator<(const Bookbookauther &b) const { return (strcmp(bookauther, b.bookauther) < 0) or (strcmp(bookauther, b.bookauther) == 0 and strcmp(ISBN,b.ISBN) < 0); }
   bool operator==(const Bookbookauther &b) const { return (strcmp(bookauther, b.bookauther) == 0 and strcmp(ISBN,b.ISBN) == 0); }
   int compare (const Bookbookauther &a,const Bookbookauther &b) {
     if (strcmp(a.bookauther, b.bookauther) < 0) return -1;
@@ -84,11 +84,11 @@ class Bookbookauther {
 };
 class keywordbook {
   public:
-  char ISBN[20];
-  char keyword[60];
+  char ISBN[21];
+  char keyword[61];
   keywordbook &operator=(const keywordbook &other) {
-    memcpy(ISBN, other.ISBN, 20);
-    memcpy(keyword, other.keyword, 60);
+    memcpy(ISBN, other.ISBN, 21);
+    memcpy(keyword, other.keyword, 61);
     return *this;
   }
   bool operator<(const keywordbook &b) const { return strcmp(keyword, b.keyword) < 0 or (strcmp(keyword,b.keyword) == 0 and strcmp(ISBN,b.ISBN) < 0); }

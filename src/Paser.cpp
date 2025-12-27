@@ -4,6 +4,7 @@
 #include <cstring>
 #include <iostream>
 #include <regex>
+#include <set>
 #include <sstream>
 #include <stdexcept>
 #include <string>
@@ -17,147 +18,297 @@ private:
 
 public:
   void parseCommand(const std::string &command) {
-    std::regex suregex(R"(su (\w{1,30}) (\w{1,30})?)");
-    std::regex registerregex(R"(register (\w{1,30}) (\w{1,30}) (\w{1,30}))");
-    std::regex passwdregex(R"(passwd (\w{1,30}) (\w{1,30})? (\w{1,30}))");
+    std::string cmd=command;
+    while (!cmd.empty() && cmd[0]==' ') cmd.erase(0,1);
+    while (!cmd.empty() && cmd[cmd.size()-1]==' ') cmd.erase(cmd.size()-1,1);
+    if (cmd.empty()) return;
+    // 处理 quit 和 exit 指令
+    if (cmd == "quit" || cmd == "exit") {
+      exit(0);
+    }
+    std::regex suregex(R"(su ([A-Za-z0-9_]{1,30})( ([A-Za-z0-9_]{1,30}))?)");
+    std::regex registerregex(R"(register ([A-Za-z0-9_]{1,30}) ([A-Za-z0-9_]{1,30}) ([\x21-\x7E]{1,30}))");
+    std::regex passwdregex2(R"(passwd ([A-Za-z0-9_]{1,30}) ([A-Za-z0-9_]{1,30}))");
+    std::regex passwdregex3(R"(passwd ([A-Za-z0-9_]{1,30}) ([A-Za-z0-9_]{1,30}) ([A-Za-z0-9_]{1,30}))");
     std::regex useraddregex(
-        R"(useradd (\w{1,30}) (\w{1,30}) (\d{1}) (\w{1,30}))");
-    std::regex deleteregex(R"(delete (\w{1,30}))");
-    std::regex showregex(
-        R"(show (-ISBN=([A-Za-z0-9]{1,20})| -name=\"([^\"]+)\"| -author=\"([^\"]+)\"| -keyword=\"([^\"]+)\")?)");
-    std::regex buyregex(R"(buy (\w{1,20})\s+(\d+))");
-    std::regex selectregex(R"(select (\w{1,20}))");
-    std::regex modifyregex(
-    R"(modify ((-ISBN=([A-Za-z0-9]{1,20}))|(-name=\"([^\"]+)\")|(-author=\"([^\"]+)\")|(-keyword=\"([^\"]+)\")|(-price=\d+(\.\d+)?))+)"); 
-    std::regex importregex(R"(import \d+ \d+)");
-    std::regex showfinanceregex(R"(show finance (\d+)?)");
+        R"(useradd ([A-Za-z0-9_]{1,30}) ([A-Za-z0-9_]{1,30}) ([137]) ([\x21-\x7E]{1,30}))");
+    std::regex deleteregex(R"(delete ([A-Za-z0-9_]{1,30}))");
+    std::regex showallregex(R"(show)");
+    std::regex showisbnregex(R"(show -ISBN=([\x21-\x7E]{1,20}))");
+    std::regex shownameregex("show -name=\"([^\"]{1,60})\"");
+    std::regex showauthorregex("show -author=\"([^\"]{1,60})\"");
+    std::regex showkeywordregex("show -keyword=\"([^\"|]{1,60})\"");
+    std::regex buyregex(R"(buy ([\x21-\x7E]{1,20}) (\d{1,10}))");
+    std::regex selectregex(R"(select ([\x21-\x7E]{1,20}))");
+    std::regex modifyregex(R"(modify (.+))");
+    std::regex importregex(R"(import (\d{1,10}) (\d{1,13}(\.\d{1,2})?))");
+    std::regex showfinanceregex(R"(show finance)");
+    std::regex showfinancecntregex(R"(show finance (\d{1,10}))");
+    std::regex logregex(R"(log)");
+    std::regex reportfinanceregex(R"(report finance)");
+    std::regex reportemployeeregex(R"(report employee)");
     std::smatch match;
-    if (std::regex_match(command, match, suregex)) {
-      char userID[30];
+    int curpri=0;
+    if (!accountManager.accounts.empty()) curpri=accountManager.accounts.back().user.privilege;
+    if (std::regex_match(cmd, match, suregex)) {
+      char userID[31];
+      memset(userID,0,31);
       std::string matched_str = match[1].str();
       matched_str.copy(userID, matched_str.size(), 0);
-      char password[30];
-      if (match[2].matched == false) {
+      char password[31];
+      memset(password,0,31);
+      if (match[3].matched == false) {
         accountManager.login(userID);
         return;
       }
-      matched_str = match[2].str();
+      matched_str = match[3].str();
       matched_str.copy(password, matched_str.size(), 0);
       accountManager.login(userID, password);
-    } else if (command == "logout") {
+    } else if (cmd == "logout") {
       accountManager.logout();
-    } else if (std::regex_match(command, match, registerregex)) {
-      char userID[30];
+    } else if (std::regex_match(cmd, match, registerregex)) {
+      char userID[31];
+      memset(userID,0,31);
       std::string matched_str = match[1].str();
       matched_str.copy(userID, matched_str.size(), 0);
-      char password[30];
+      char password[31];
+      memset(password,0,31);
       matched_str = match[2].str();
       matched_str.copy(password, matched_str.size(), 0);
-      char username[30];
+      char username[31];
+      memset(username,0,31);
       matched_str = match[3].str();
       matched_str.copy(username, matched_str.size(), 0);
       accountManager.reg(userID, password, username);
-    } else if (std::regex_match(command, match, passwdregex)) {
-      char userID[30];
+    } else if (std::regex_match(cmd, match, passwdregex2)) {
+      if (curpri < 1) {std::cout << "Invalid\n";return;}
+      if (curpri != 7) {std::cout << "Invalid\n";return;}
+      char userID[31];
+      memset(userID,0,31);
       std::string matched_str = match[1].str();
       matched_str.copy(userID, matched_str.size(), 0);
-      char newpassword[30];
-      matched_str = match[3].str();
+      char newpassword[31];
+      memset(newpassword,0,31);
+      matched_str = match[2].str();
       matched_str.copy(newpassword, matched_str.size(), 0);
-      if (match[2].matched == false) {
-        accountManager.changeinf(userID, newpassword);
-        return;
-      }
-      char oldpassword[30];
+      accountManager.changeinf(userID, newpassword);
+    } else if (std::regex_match(cmd, match, passwdregex3)) {
+      if (curpri < 1) {std::cout << "Invalid\n";return;}
+      char userID[31];
+      memset(userID,0,31);
+      std::string matched_str = match[1].str();
+      matched_str.copy(userID, matched_str.size(), 0);
+      char oldpassword[31];
+      memset(oldpassword,0,31);
       matched_str = match[2].str();
       matched_str.copy(oldpassword, matched_str.size(), 0);
+      char newpassword[31];
+      memset(newpassword,0,31);
+      matched_str = match[3].str();
+      matched_str.copy(newpassword, matched_str.size(), 0);
       accountManager.changeinf(userID, oldpassword, newpassword);
-    } else if (std::regex_match(command, match, useraddregex)) {
-      char userID[30];
+    } else if (std::regex_match(cmd, match, useraddregex)) {
+      char userID[31];
+      memset(userID,0,31);
       std::string matched_str = match[1].str();
       matched_str.copy(userID, matched_str.size(), 0);
-      char password[30];
+      char password[31];
+      memset(password,0,31);
       matched_str = match[2].str();
       matched_str.copy(password, matched_str.size(), 0);
       matched_str = match[3].str();
       int privilege = matched_str[0] - '0';
       matched_str = match[4].str();
-      char username[30];
+      char username[31];
+      memset(username,0,31);
       matched_str.copy(username, matched_str.size(), 0);
       accountManager.useradd(userID, password, privilege, username);
-    } else if (std::regex_match(command, match, deleteregex)) {
-      char userID[30];
+    } else if (std::regex_match(cmd, match, deleteregex)) {
+      char userID[31];
+      memset(userID,0,31);
       std::string matched_str = match[1].str();
       matched_str.copy(userID, matched_str.size(), 0);
       accountManager.deleteuser(userID);
-    } else if (std::regex_match(command, match, showregex)) {
-
-    } else if (std::regex_match(command, match, buyregex)) {
-      char ISBN[20];
+    } else if (std::regex_match(cmd, match, showfinancecntregex)) {
+      if (curpri != 7) {std::cout << "Invalid\n";return;}
+      long long num=std::stoll(match[1].str());
+      if (num > 2147483647LL) {std::cout << "Invalid\n";return;}
+      logmanager.show(num);
+    } else if (std::regex_match(cmd, match, showfinanceregex)) {
+      if (curpri != 7) {std::cout << "Invalid\n";return;}
+      logmanager.show();
+    } else if (std::regex_match(cmd, match, showisbnregex)) {
+      if (curpri < 1) {std::cout << "Invalid\n";return;}
+      char ISBN[21];
+      memset(ISBN,0,21);
       std::string matched_str = match[1].str();
       matched_str.copy(ISBN, matched_str.size(), 0);
-      Transaction txn;
-      txn.type=false;
+      bookManager.show("ISBN",ISBN);
+    } else if (std::regex_match(cmd, match, shownameregex)) {
+      if (curpri < 1) {std::cout << "Invalid\n";return;}
+      char bookname[61];
+      memset(bookname,0,61);
+      std::string matched_str = match[1].str();
+      matched_str.copy(bookname, matched_str.size(), 0);
+      bookManager.show("name",bookname);
+    } else if (std::regex_match(cmd, match, showauthorregex)) {
+      if (curpri < 1) {std::cout << "Invalid\n";return;}
+      char authorname[61];
+      memset(authorname,0,61);
+      std::string matched_str = match[1].str();
+      matched_str.copy(authorname, matched_str.size(), 0);
+      bookManager.show("auther",authorname);
+    } else if (std::regex_match(cmd, match, showkeywordregex)) {
+      if (curpri < 1) {std::cout << "Invalid\n";return;}
+      char keyword[61];
+      memset(keyword,0,61);
+      std::string matched_str = match[1].str();
+      matched_str.copy(keyword, matched_str.size(), 0);
+      bookManager.show("keyword",keyword);
+    } else if (std::regex_match(cmd, match, showallregex)) {
+      if (curpri < 1) {std::cout << "Invalid\n";return;}
+      bookManager.show("all",nullptr);
+    } else if (std::regex_match(cmd, match, buyregex)) {
+      if (curpri < 1) {std::cout << "Invalid\n";return;}
+      char ISBN[21];
+      memset(ISBN,0,21);
+      std::string matched_str = match[1].str();
+      matched_str.copy(ISBN, matched_str.size(), 0);
       long long Quantity = std::stoll(match[2].str());
+      if (Quantity <= 0 || Quantity > 2147483647LL) {std::cout << "Invalid\n";return;}
       Book book;
-      memcpy(book.ISBN,ISBN,20);
-      txn.TotalCost=Quantity * bookManager.bo.find(book).back().price;
+      memcpy(book.ISBN,ISBN,21);
+      std::vector<Book> found=bookManager.bo.find(book);
+      if (found.empty()) {std::cout << "Invalid\n";return;}
+      // 检查库存是否足够
+      if (found.back().remain_num < Quantity) {std::cout << "Invalid\n";return;}
+      Transaction txn;
+      txn.type=true;
+      txn.TotalCost=Quantity * found.back().price;
       bookManager.buybook(ISBN, Quantity);
       logmanager.insertTransaction(txn);
-    } else if (std::regex_match(command, match, selectregex)) {
-      char ISBN[20];
+    } else if (std::regex_match(cmd, match, selectregex)) {
+      if (curpri < 3) {std::cout << "Invalid\n";return;}
+      char ISBN[21];
+      memset(ISBN,0,21);
       std::string matched_str = match[1].str();
       matched_str.copy(ISBN, matched_str.size(), 0);
       bookManager.select(ISBN, accountManager);
-    } else if (std::regex_match(command, match, modifyregex)) {
-      char ISBN[20], bookname[60], authorname[60], keyword[60];
+    } else if (std::regex_match(cmd, match, modifyregex)) {
+      if (curpri < 3) {std::cout << "Invalid\n";return;}
+      Book tmp;
+      if (accountManager.accounts.empty() || memcmp(accountManager.accounts.back().book.ISBN,tmp.ISBN,21)==0) {
+        std::cout << "Invalid\n";return;
+      }
+      std::string params = match[1].str();
+      std::regex isbnparam(R"(-ISBN=([\x21-\x7E]{1,20}))");
+      std::regex nameparam("-name=\"([^\"]{1,60})\"");
+      std::regex authorparam("-author=\"([^\"]{1,60})\"");
+      std::regex keywordparam("-keyword=\"([^\"]{1,60})\"");
+      std::regex priceparam(R"(-price=(\d{1,13}(\.\d{1,2})?))");
+      bool hasISBN=false,hasName=false,hasAuthor=false,hasKeyword=false,hasPrice=false;
+      char ISBN[21], bookname[61], authorname[61], keyword[61];
+      memset(ISBN,0,21);memset(bookname,0,61);memset(authorname,0,61);memset(keyword,0,61);
       double price = -1;
       Book book = accountManager.accounts.back().book;
-      if (match[3].matched) {
-        std::string matched_str = match[3].str();
-        matched_str.copy(ISBN, matched_str.size(), 0);
-        memcpy(book.ISBN, ISBN, 20);
+      std::istringstream iss(params);
+      std::string part;
+      while (iss >> part) {
+        std::smatch pm;
+        if (std::regex_match(part, pm, isbnparam)) {
+          if (hasISBN) {std::cout << "Invalid\n";return;}
+          hasISBN=true;
+          std::string matched_str = pm[1].str();
+          matched_str.copy(ISBN, matched_str.size(), 0);
+        } else if (std::regex_match(part, pm, nameparam)) {
+          if (hasName) {std::cout << "Invalid\n";return;}
+          hasName=true;
+          std::string matched_str = pm[1].str();
+          matched_str.copy(bookname, matched_str.size(), 0);
+        } else if (std::regex_match(part, pm, authorparam)) {
+          if (hasAuthor) {std::cout << "Invalid\n";return;}
+          hasAuthor=true;
+          std::string matched_str = pm[1].str();
+          matched_str.copy(authorname, matched_str.size(), 0);
+        } else if (std::regex_match(part, pm, keywordparam)) {
+          if (hasKeyword) {std::cout << "Invalid\n";return;}
+          hasKeyword=true;
+          std::string matched_str = pm[1].str();
+          matched_str.copy(keyword, matched_str.size(), 0);
+        } else if (std::regex_match(part, pm, priceparam)) {
+          if (hasPrice) {std::cout << "Invalid\n";return;}
+          hasPrice=true;
+          price = std::stod(pm[1].str());
+        } else {
+          std::cout << "Invalid\n";return;
+        }
+      }
+      if (!hasISBN && !hasName && !hasAuthor && !hasKeyword && !hasPrice) {
+        std::cout << "Invalid\n";return;
+      }
+      // 检查 keyword 是否包含重复信息段
+      if (hasKeyword) {
+        std::vector<keywordchar> keys = tokekeyword(keyword);
+        std::set<std::string> keySet;
+        for (size_t i = 0; i < keys.size(); i++) {
+          if (keySet.count(keys[i].ans)) {
+            std::cout << "Invalid\n";return;
+          }
+          keySet.insert(keys[i].ans);
+        }
+      }
+      if (hasISBN) {
+        if (memcmp(book.ISBN,ISBN,21)==0) {std::cout << "Invalid\n";return;}
+        // 检查新 ISBN 是否已被其他书使用
+        Book checkBook;
+        memcpy(checkBook.ISBN, ISBN, 21);
+        std::vector<Book> existingBooks = bookManager.bo.find(checkBook);
+        if (!existingBooks.empty()) {std::cout << "Invalid\n";return;}
+        memcpy(book.ISBN, ISBN, 21);
         bookManager.modify(book,accountManager,1);
       }
-      if (match[5].matched) {
-        std::string matched_str = match[5].str();
-        matched_str.copy(bookname, matched_str.size(), 0);
-        memcpy(book.bookname, bookname, 60);
+      if (hasName) {
+        memcpy(book.bookname, bookname, 61);
         bookManager.modify(book,accountManager,2);
       }
-      if (match[7].matched) {
-        std::string matched_str = match[7].str();
-        matched_str.copy(authorname, matched_str.size(), 0);
-        memcpy(book.bookauther, authorname, 60);
+      if (hasAuthor) {
+        memcpy(book.bookauther, authorname, 61);
         bookManager.modify(book,accountManager,3);
       }
-      if (match[9].matched) {
-        std::string matched_str = match[9].str();
-        matched_str.copy(keyword, matched_str.size(), 0);
-        memcpy(book.keyword, keyword, 60);
+      if (hasKeyword) {
+        memcpy(book.keyword, keyword, 61);
         bookManager.modify(book,accountManager,4);
       }
-      if (match[11].matched) {
-        book.price = std::stod(match[11].str());
+      if (hasPrice) {
+        book.price = price;
         bookManager.modify(book,accountManager,5);
       }
-    } else if (std::regex_match(command, match, importregex)) {
-      long long Quantity = std::stol(match[1].str());
-      long long TotalCost = std::stol(match[2].str());
+    } else if (std::regex_match(cmd, match, importregex)) {
+      if (curpri < 3) {std::cout << "Invalid\n";return;}
+      Book tmp;
+      if (accountManager.accounts.empty() || memcmp(accountManager.accounts.back().book.ISBN,tmp.ISBN,21)==0) {
+        std::cout << "Invalid\n";return;
+      }
+      long long Quantity = std::stoll(match[1].str());
+      double TotalCost = std::stod(match[2].str());
+      if (Quantity <= 0 || Quantity > 2147483647LL || TotalCost <= 0) {std::cout << "Invalid\n";return;}
       bookManager.import(Quantity, TotalCost, accountManager);
       Transaction txn;
       txn.TotalCost=TotalCost;
-      txn.type=true;
+      txn.type=false;
       logmanager.insertTransaction(txn);
     }
-    else if (std::regex_match(command, match, showfinanceregex)) {
-      long long num;
-      if (match[1].matched) {
-        num=std::stod(match[1].str());
-        logmanager.show(num);
-        return;
-      }
-      else logmanager.show();
+    else if (std::regex_match(cmd, match, logregex)) {
+      if (curpri != 7) {std::cout << "Invalid\n";return;}
+      logmanager.generateLog();
+    }
+    else if (std::regex_match(cmd, match, reportfinanceregex)) {
+      if (curpri != 7) {std::cout << "Invalid\n";return;}
+      logmanager.generateFinanceReport();
+    }
+    else if (std::regex_match(cmd, match, reportemployeeregex)) {
+      if (curpri != 7) {std::cout << "Invalid\n";return;}
+      logmanager.generateEmployeeReport();
     }
     else std::cout << "Invalid\n";
   }

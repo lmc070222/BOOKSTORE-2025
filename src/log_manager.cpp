@@ -11,12 +11,19 @@ void LogManager::show(long long count_) {
   double totalIncome = 0.0;
   double totalExpenditure = 0.0;
   if (count_ > count || count_ < 0) {
+    std::cout << "Invalid\n";
+    return;
+  }
+  if (count_ == 0) {
+    std::cout << "\n";
     return;
   }
   for (long long i = count; i > count - count_; i--) {
     Transaction tmp;
     tmp.index = i;
-    Transaction txn = lo.find(tmp).back(); // 查找交易
+    std::vector<Transaction> found=lo.find(tmp);
+    if (found.empty()) continue;
+    Transaction txn = found.back();
     if (txn.type) {
       totalIncome += txn.TotalCost;
     } else {
@@ -30,10 +37,16 @@ void LogManager::show(long long count_) {
 void LogManager::show() {
   double totalIncome = 0.0;
   double totalExpenditure = 0.0;
+  if (count == 0) {
+    std::cout << "+ 0.00 - 0.00\n";
+    return;
+  }
   for (long long i = 1; i <= count; i++) {
     Transaction tmp;
     tmp.index = i;
-    Transaction txn = lo.find(tmp).back();
+    std::vector<Transaction> found=lo.find(tmp);
+    if (found.empty()) continue;
+    Transaction txn = found.back();
     if (txn.type) {
       totalIncome += txn.TotalCost;
     } else {
@@ -51,7 +64,9 @@ void LogManager::generateFinanceReport() {
   for (long long i = 1; i <= count; i++) {
     Transaction tmp;
     tmp.index = i;
-    Transaction txn = lo.find(tmp).back();
+    std::vector<Transaction> found = lo.find(tmp);
+    if (found.empty()) continue;
+    Transaction txn = found.back();
     if (txn.type) {
       totalIncome += txn.TotalCost;
     } else {
@@ -72,34 +87,31 @@ void LogManager::generateFinanceReport() {
 }
 void LogManager::generateEmployeeReport() {
   std::ostringstream report;
-  long long totalTransactions = 0;
-  for (long long i = 0; i < count; i++) {
-    Transaction txn = lo.find(Transaction()).back();
-    totalTransactions++;
-  }
   report << "Employee Work Report\n";
   report << "==============================\n";
-  report << "Total Transactions Handled: " << totalTransactions << "\n";
+  report << "Total Transactions Handled: " << count << "\n";
   report << "==============================\n";
   report << "End of Report\n";
   std::cout << report.str();
 }
-/*void LogManager::generateLog() {
+void LogManager::generateLog() {
   std::ostringstream log;
   log << "System Logs\n";
   log << "==============================\n";
-  for (long long i = 0; i < count; i++) {
-    Transaction txn = lo.find(Transaction());
-    log << "Transaction ID: " << txn.TransactionID << "\n";
-    log << "ISBN: " << txn.ISBN << "\n";
-    log << "Quantity: " << txn.Quantity << "\n";
-    log << "Total Cost: " << txn.TotalCost << "\n";
+  for (long long j = 1; j <= count; j++) {
+    Transaction tmp;
+    tmp.index = j;
+    std::vector<Transaction> found=lo.find(tmp);
+    if (found.empty()) continue;
+    Transaction txn = found.back();
+    log << "Transaction ID: " << txn.index << "\n";
+    log << "Total Cost: " << std::fixed << std::setprecision(2) << txn.TotalCost << "\n";
     log << "Transaction Type: " << (txn.type ? "Sale" : "Purchase") << "\n";
     log << "==============================\n";
   }
   log << "End of Logs\n";
   std::cout << log.str();
-}*/
+}
 void LogManager::insertTransaction(Transaction &txn) {
   i++;
   txn.index = i;
