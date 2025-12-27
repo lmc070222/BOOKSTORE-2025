@@ -180,7 +180,6 @@ public:
       memcpy(book.ISBN,ISBN,21);
       std::vector<Book> found=bookManager.bo.find(book);
       if (found.empty()) {std::cout << "Invalid\n";return;}
-      // 检查库存是否足够
       if (found.back().remain_num < Quantity) {std::cout << "Invalid\n";return;}
       Transaction txn;
       txn.type=true;
@@ -246,7 +245,6 @@ public:
       if (!hasISBN && !hasName && !hasAuthor && !hasKeyword && !hasPrice) {
         std::cout << "Invalid\n";return;
       }
-      // 检查 keyword 是否包含重复信息段
       if (hasKeyword) {
         std::vector<keywordchar> keys = tokekeyword(keyword);
         std::set<std::string> keySet;
@@ -259,7 +257,6 @@ public:
       }
       if (hasISBN) {
         if (memcmp(book.ISBN,ISBN,21)==0) {std::cout << "Invalid\n";return;}
-        // 检查新 ISBN 是否已被其他书使用
         Book checkBook;
         memcpy(checkBook.ISBN, ISBN, 21);
         std::vector<Book> existingBooks = bookManager.bo.find(checkBook);

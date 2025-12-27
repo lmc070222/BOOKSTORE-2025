@@ -111,6 +111,9 @@ void BookManager::modify (Book new_inf,AccountManager& account_manager,int flag)
     bo.insert(new_inf);
   }
   account_manager.accounts.back().book=new_inf;
+  for (int i=0;i <= account_manager.accounts.size()-1;i++) {
+    if (account_manager.accounts[i].book == tmp) account_manager.accounts[i].book = new_inf;
+  }
 }
 void BookManager::import (long long Quantity, double TotalCost,AccountManager& account_manager) {
   Book tmp;

@@ -144,6 +144,8 @@ public:
           if (lo < b.cnt && b.d[lo] == infor) {
             for (int i = lo; i < b.cnt - 1; i++)
               b.d[i] = b.d[i + 1];
+            information zero;
+            b.d[b.cnt-1]=zero;
             b.cnt--;
             wr(p, b);
             return;
