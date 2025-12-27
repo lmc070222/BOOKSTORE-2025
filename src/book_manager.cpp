@@ -5,7 +5,8 @@
 #include <iomanip>
 #include <iostream>
 #include <vector>
-void BookManager::buybook(char *IS, long long buy_num, AccountManager &account_manager) {
+void BookManager::buybook(char *IS, long long buy_num,
+                          AccountManager &account_manager) {
   Book booktmp;
   memcpy(booktmp.ISBN, IS, 21);
   std::vector<Book> book_ = bo.find(booktmp);
@@ -19,8 +20,9 @@ void BookManager::buybook(char *IS, long long buy_num, AccountManager &account_m
   bo.deleteinformation(boo);
   boo.remain_num -= buy_num;
   bo.insert(boo);
-  for (int i=0;i < account_manager.accounts.size();i++) {
-    if (account_manager.accounts[i].book == boo) account_manager.accounts[i].book = boo;
+  for (int i = 0; i < account_manager.accounts.size(); i++) {
+    if (account_manager.accounts[i].book == boo)
+      account_manager.accounts[i].book = boo;
   }
 }
 void BookManager::select(char *ISBN, AccountManager &account_manager) {
@@ -49,6 +51,12 @@ void BookManager::modify(Book new_inf, AccountManager &account_manager,
   }
   tmp = account_manager.accounts.back().book;
   if (flag == 1) {
+    std::vector<int> a;
+    for (int i = 0; i < account_manager.accounts.size(); i++) {
+      if (account_manager.accounts[i].book == tmp) {
+        account_manager.accounts[i].book = new_inf;
+      }
+    }
     bo.deleteinformation(tmp);
     bo.insert(new_inf);
     Bookbookauther bookauthertmp;
@@ -73,7 +81,6 @@ void BookManager::modify(Book new_inf, AccountManager &account_manager,
       memcpy(keyw.ISBN, new_inf.ISBN, 21);
       keywordbook_.insert(keyw);
     }
-
   }
   if (flag == 2) {
     bo.deleteinformation(tmp);
@@ -99,14 +106,14 @@ void BookManager::modify(Book new_inf, AccountManager &account_manager,
     bo.deleteinformation(tmp);
     bo.insert(new_inf);
     std::vector<keywordchar> key = tokekeyword(tmp.keyword);
-    char cm[61];
+    /*char cm[61];
     memset(cm,0,61);
     for (int i=0;i <= key.size()-1;i++) {
       if (memcmp(cm,key[i].ans,61) == 0) {
         std::cout << "Invalid\n";
         return;
       }
-    }
+    }*/
     for (size_t i = 0; i < key.size(); i++) {
       keywordbook keyw;
       memcpy(keyw.keyword, key[i].ans, 61);

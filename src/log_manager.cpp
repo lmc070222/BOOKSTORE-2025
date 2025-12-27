@@ -21,8 +21,9 @@ void LogManager::show(long long count_) {
   for (long long i = count; i > count - count_; i--) {
     Transaction tmp;
     tmp.index = i;
-    std::vector<Transaction> found=lo.find(tmp);
-    if (found.empty()) continue;
+    std::vector<Transaction> found = lo.find(tmp);
+    if (found.empty())
+      continue;
     Transaction txn = found.back();
     if (txn.type) {
       totalIncome += txn.TotalCost;
@@ -44,8 +45,9 @@ void LogManager::show() {
   for (long long i = 1; i <= count; i++) {
     Transaction tmp;
     tmp.index = i;
-    std::vector<Transaction> found=lo.find(tmp);
-    if (found.empty()) continue;
+    std::vector<Transaction> found = lo.find(tmp);
+    if (found.empty())
+      continue;
     Transaction txn = found.back();
     if (txn.type) {
       totalIncome += txn.TotalCost;
@@ -65,7 +67,8 @@ void LogManager::generateFinanceReport() {
     Transaction tmp;
     tmp.index = i;
     std::vector<Transaction> found = lo.find(tmp);
-    if (found.empty()) continue;
+    if (found.empty())
+      continue;
     Transaction txn = found.back();
     if (txn.type) {
       totalIncome += txn.TotalCost;
@@ -101,11 +104,13 @@ void LogManager::generateLog() {
   for (long long j = 1; j <= count; j++) {
     Transaction tmp;
     tmp.index = j;
-    std::vector<Transaction> found=lo.find(tmp);
-    if (found.empty()) continue;
+    std::vector<Transaction> found = lo.find(tmp);
+    if (found.empty())
+      continue;
     Transaction txn = found.back();
     log << "Transaction ID: " << txn.index << "\n";
-    log << "Total Cost: " << std::fixed << std::setprecision(2) << txn.TotalCost << "\n";
+    log << "Total Cost: " << std::fixed << std::setprecision(2) << txn.TotalCost
+        << "\n";
     log << "Transaction Type: " << (txn.type ? "Sale" : "Purchase") << "\n";
     log << "==============================\n";
   }

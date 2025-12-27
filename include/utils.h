@@ -145,7 +145,7 @@ public:
             for (int i = lo; i < b.cnt - 1; i++)
               b.d[i] = b.d[i + 1];
             information zero;
-            b.d[b.cnt-1]=zero;
+            b.d[b.cnt - 1] = zero;
             b.cnt--;
             wr(p, b);
             return;
@@ -192,7 +192,7 @@ public:
     }
     return res;
   }
-   std::vector<information> findindex(information infor) {
+  std::vector<information> findindex(information infor) {
     std::vector<information> res;
     long long p = 0;
     while (p != -1) {
@@ -200,9 +200,9 @@ public:
       rd(p, b);
       if (b.cnt > 0) {
         int c2;
-        if (infor.compare(infor , b.d[b.cnt - 1]) == -1) {
+        if (infor.compare(infor, b.d[b.cnt - 1]) == -1) {
           c2 = -1;
-        } else if (infor.compare(infor , b.d[b.cnt - 1]) == 0) {
+        } else if (infor.compare(infor, b.d[b.cnt - 1]) == 0) {
           c2 = 0;
         } else
           c2 = 1;
@@ -210,12 +210,13 @@ public:
           int lo = 0, hi = b.cnt;
           while (lo < hi) {
             int mid = (lo + hi) / 2;
-            if (infor.compare(b.d[mid] , infor) == -1)
+            if (infor.compare(b.d[mid], infor) == -1)
               lo = mid + 1;
             else
               hi = mid;
           }
-          for (int i = lo; i < b.cnt and (infor.compare(b.d[i] , infor) == 0); i++) {
+          for (int i = lo; i < b.cnt and (infor.compare(b.d[i], infor) == 0);
+               i++) {
             res.push_back(b.d[i]);
           }
         }
@@ -231,4 +232,4 @@ public:
 struct keywordchar {
   char ans[60];
 };
-std::vector<keywordchar> tokekeyword(const char *a) ;
+std::vector<keywordchar> tokekeyword(const char *a);

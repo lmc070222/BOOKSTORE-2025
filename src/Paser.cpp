@@ -236,7 +236,7 @@ public:
       Transaction txn;
       txn.type = true;
       txn.TotalCost = Quantity * found.back().price;
-      bookManager.buybook(ISBN, Quantity,accountManager);
+      bookManager.buybook(ISBN, Quantity, accountManager);
       logmanager.insertTransaction(txn);
     } else if (std::regex_match(cmd, match, selectregex)) {
       if (curpri < 3) {

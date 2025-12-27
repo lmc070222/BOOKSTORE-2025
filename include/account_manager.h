@@ -42,15 +42,16 @@ public:
   std::vector<ubook> accounts;
   AccountManager() {
     acc.initialise("accounts.dat");
-    User user0 ;
-    char root[31]="root";
-    char sjtu[31]="sjtu";
-    memcpy (user0.username,root,31);
-    memcpy (user0.id,root,31);
-    memcpy (user0.password,sjtu,31);
-    user0.privilege=7;
-    std::vector<User> found=acc.find(user0);
-    if (found.empty()) acc.insert(user0);
+    User user0;
+    char root[31] = "root";
+    char sjtu[31] = "sjtu";
+    memcpy(user0.username, root, 31);
+    memcpy(user0.id, root, 31);
+    memcpy(user0.password, sjtu, 31);
+    user0.privilege = 7;
+    std::vector<User> found = acc.find(user0);
+    if (found.empty())
+      acc.insert(user0);
   }
   ~AccountManager() { acc.f.close(); }
   void login(char *userid, char *pas);
