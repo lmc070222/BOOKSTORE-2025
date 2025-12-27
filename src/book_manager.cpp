@@ -73,6 +73,7 @@ void BookManager::modify(Book new_inf, AccountManager &account_manager,
       memcpy(keyw.ISBN, new_inf.ISBN, 21);
       keywordbook_.insert(keyw);
     }
+
   }
   if (flag == 2) {
     bo.deleteinformation(tmp);
@@ -98,6 +99,14 @@ void BookManager::modify(Book new_inf, AccountManager &account_manager,
     bo.deleteinformation(tmp);
     bo.insert(new_inf);
     std::vector<keywordchar> key = tokekeyword(tmp.keyword);
+    char cm[61];
+    memset(cm,0,61);
+    for (int i=0;i <= key.size()-1;i++) {
+      if (memcmp(cm,key[i].ans,61) == 0) {
+        std::cout << "Invalid\n";
+        return;
+      }
+    }
     for (size_t i = 0; i < key.size(); i++) {
       keywordbook keyw;
       memcpy(keyw.keyword, key[i].ans, 61);
