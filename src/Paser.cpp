@@ -1,6 +1,6 @@
-#include "/home/lmc123456/Bookstore-2025/include/account_manager.h"
-#include "/home/lmc123456/Bookstore-2025/include/book_manager.h"
-#include "/home/lmc123456/Bookstore-2025/include/log_manager.h"
+#include "account_manager.h"
+#include "book_manager.h"
+#include "log_manager.h"
 #include <cstring>
 #include <iostream>
 #include <regex>
