@@ -25,7 +25,7 @@ public:
   Book selectedBook;
   void show(std::string type,
             char *inf); 
-  void buybook(char *IS, long long buy_num);
+  void buybook(char *IS, long long buy_num,AccountManager &account_manager);
   void select(char *ISBN, AccountManager &account_manager);
   void modify(Book new_inf, AccountManager &account_manager,int flag);
   void import(long long Quantity, double TotalCost,
