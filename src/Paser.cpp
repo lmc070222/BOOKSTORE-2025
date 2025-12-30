@@ -25,8 +25,7 @@ public:
       cmd.erase(cmd.size() - 1, 1);
     if (cmd.empty())
       return;
-    // 处理 quit 和 exit 指令
-    if (cmd == "quit" || cmd == "exit") {
+    if (cmd == "quit" or cmd == "exit") {
       exit(0);
     }
     std::regex suregex(R"(su ([A-Za-z0-9_]{1,30})( ([A-Za-z0-9_]{1,30}))?)");
@@ -322,7 +321,7 @@ public:
           return;
         }
       }
-      if (!hasISBN && !hasName && !hasAuthor && !hasKeyword && !hasPrice) {
+      if (!hasISBN and !hasName and !hasAuthor and !hasKeyword and !hasPrice) {
         std::cout << "Invalid\n";
         return;
       }
@@ -374,7 +373,7 @@ public:
         return;
       }
       Book tmp;
-      if (accountManager.accounts.empty() ||
+      if (accountManager.accounts.empty() or
           memcmp(accountManager.accounts.back().book.ISBN, tmp.ISBN, 21) == 0) {
         std::cout << "Invalid\n";
         return;

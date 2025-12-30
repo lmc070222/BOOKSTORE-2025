@@ -15,7 +15,7 @@ int main() {
       cmd.erase(0, 1);
     while (!cmd.empty() && cmd[cmd.size() - 1] == ' ')
       cmd.erase(cmd.size() - 1, 1);
-    if (cmd == "quit" || cmd == "exit") {
+    if (cmd == "quit" or cmd == "exit") {
       break;
     }
     commandpaser.parseCommand(command);

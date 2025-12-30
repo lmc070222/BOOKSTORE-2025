@@ -1,5 +1,6 @@
 CMakeFiles/code.dir/src/main.cpp.o: \
  /home/lmc123456/Bookstore-2025/src/main.cpp /usr/include/stdc-predef.h \
+ /home/lmc123456/Bookstore-2025/src/Paser.cpp \
  /home/lmc123456/Bookstore-2025/include/account_manager.h \
  /home/lmc123456/Bookstore-2025/include/book.h \
  /usr/include/c++/13/cstring \
@@ -162,8 +163,8 @@ CMakeFiles/code.dir/src/main.cpp.o: \
  /usr/include/c++/13/bits/fstream.tcc /usr/include/c++/13/iostream \
  /home/lmc123456/Bookstore-2025/include/book_manager.h \
  /home/lmc123456/Bookstore-2025/include/log_manager.h \
- /home/lmc123456/Bookstore-2025/src/Paser.cpp /usr/include/c++/13/regex \
- /usr/include/c++/13/bitset /usr/include/c++/13/locale \
+ /usr/include/c++/13/regex /usr/include/c++/13/bitset \
+ /usr/include/c++/13/locale \
  /usr/include/c++/13/bits/locale_facets_nonio.h /usr/include/c++/13/ctime \
  /usr/include/x86_64-linux-gnu/c++/13/bits/time_members.h \
  /usr/include/x86_64-linux-gnu/c++/13/bits/messages_members.h \

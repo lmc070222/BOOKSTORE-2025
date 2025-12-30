@@ -60,7 +60,6 @@ void LogManager::show() {
             << "\n";
 }
 void LogManager::generateFinanceReport() {
-  std::ostringstream report;
   double totalIncome = 0.0;
   double totalExpenditure = 0.0;
   for (long long i = 1; i <= count; i++) {
@@ -76,31 +75,27 @@ void LogManager::generateFinanceReport() {
       totalExpenditure += txn.TotalCost;
     }
   }
-  report << "Finance Report\n";
-  report << "==============================\n";
-  report << "Total Income: " << std::fixed << std::setprecision(2)
+  std::cout << "Finance Report\n";
+  std::cout << "==============================\n";
+  std::cout << "Total Income: " << std::fixed << std::setprecision(2)
          << totalIncome << "\n";
-  report << "Total Expenditure: " << std::fixed << std::setprecision(2)
+  std::cout << "Total Expenditure: " << std::fixed << std::setprecision(2)
          << totalExpenditure << "\n";
-  report << "Net Profit: " << std::fixed << std::setprecision(2)
+  std::cout << "Net Profit: " << std::fixed << std::setprecision(2)
          << (totalIncome - totalExpenditure) << "\n";
-  report << "==============================\n";
-  report << "End of Report\n";
-  std::cout << report.str();
+  std::cout << "==============================\n";
+  std::cout << "End of Report\n";
 }
 void LogManager::generateEmployeeReport() {
-  std::ostringstream report;
-  report << "Employee Work Report\n";
-  report << "==============================\n";
-  report << "Total Transactions Handled: " << count << "\n";
-  report << "==============================\n";
-  report << "End of Report\n";
-  std::cout << report.str();
+  std::cout << "Employee Work Report\n";
+  std::cout << "==============================\n";
+  std::cout << "Total Transactions Handled: " << count << "\n";
+  std::cout << "==============================\n";
+  std::cout << "End of Report\n";
 }
 void LogManager::generateLog() {
-  std::ostringstream log;
-  log << "System Logs\n";
-  log << "==============================\n";
+  std::cout << "System Logs\n";
+  std::cout << "==============================\n";
   for (long long j = 1; j <= count; j++) {
     Transaction tmp;
     tmp.index = j;
@@ -108,14 +103,13 @@ void LogManager::generateLog() {
     if (found.empty())
       continue;
     Transaction txn = found.back();
-    log << "Transaction ID: " << txn.index << "\n";
-    log << "Total Cost: " << std::fixed << std::setprecision(2) << txn.TotalCost
+    std::cout << "Transaction ID: " << txn.index << "\n";
+    std::cout << "Total Cost: " << std::fixed << std::setprecision(2) << txn.TotalCost
         << "\n";
-    log << "Transaction Type: " << (txn.type ? "Sale" : "Purchase") << "\n";
-    log << "==============================\n";
+    std::cout << "Transaction Type: " << (txn.type ? "Sale" : "Purchase") << "\n";
+    std::cout << "==============================\n";
   }
-  log << "End of Logs\n";
-  std::cout << log.str();
+  std::cout << "End of Logs\n";
 }
 void LogManager::insertTransaction(Transaction &txn) {
   i++;
